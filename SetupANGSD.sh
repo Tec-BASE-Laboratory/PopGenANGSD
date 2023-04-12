@@ -1,32 +1,29 @@
+#
 #### Setup y preparación de los datos #### 
 
 ### Bienvenida y Creación de un directorio para todo el análisis ### 
 
 echo "Nuevo análisis con ANGSD"
-echo "Escribe el nombre del Nuevo Análisis sin espacios ni caracteres especiales" 
-read analysis_name
-echo "Escribe el path de la carpeta donde se encuentra tu genoma de referencia" 
-read path2GenRef 
-Echo "Ahora escribe el nombre de la carpeta donde se encuentra tu genoma de referencia"
-read GenRefDir
+read -p "Escribe el nombre del Nuevo Análisis sin espacios ni caracteres especiales " analysis_name
+read -p "Escribe el path de la carpeta donde se encuentra tu genoma de referencia " path_GenRef 
+cd $path_GenRef
+read -p "Ahora escribe el nombre de la carpeta donde se encuentra tu genoma de referencia " GenRefDir
 
-cd $path2GenRef
+
 mkdir $analysis_name 
 
-for i in $GenRefDir/*.fasta
+for filename in $GenRefDir/*.fasta
  do echo $filename
 done 
 
-echo "Escribe el nombre del archivo del genoma de referencia como se encuentra en la lista anterior" 
-read GenomRef
+read -p "Escribe el nombre del archivo del genoma de referencia como se encuentra en la lista anterior" GenomRef
 
 ### Se indexa el genoma de referencia ###
 
 bwa index GenomRef
 
 ### Burrows Willer Alignment ###
-echo "Escribe el path del directorio donde se encuentran los fasta q de los genomas a analizar" 
-read pathfastq
+ read -p "Escribe el path del directorio donde se encuentran los fasta q de los genomas a analizar" pathfastq
 
 
 
