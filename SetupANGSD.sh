@@ -1,34 +1,42 @@
-#
+#!/bin/bash
+
 #### Setup y preparación de los datos #### 
 
 ### Bienvenida y Creación de un directorio para todo el análisis ### 
 
 echo "Nuevo análisis con ANGSD"
 read -p "Escribe el nombre del Nuevo Análisis sin espacios ni caracteres especiales " analysis_name
-read -p "Escribe el path de la carpeta donde se encuentra tu genoma de referencia " path_GenRef 
+read -p "Escribe el path del directorio donde se encuentra la carpeta de tu genoma de referencia " path_GenRef 
 cd $path_GenRef
+mkdir $analysis_name 
 read -p "Ahora escribe el nombre de la carpeta donde se encuentra tu genoma de referencia " GenRefDir
 
 
-mkdir $analysis_name 
-
 for filename in $GenRefDir/*.fasta
- do echo $filename
+do 
+    echo $filename
 done 
 
 read -p "Escribe el nombre del archivo del genoma de referencia como se encuentra en la lista anterior" GenomRef
 
-### Se indexa el genoma de referencia ###
+mv "$GenomRef" "$analysis_name/"
+cd "$analysis_name"
+bwa index "$path_GenRef/$analysis_name/$GenomRef"
 
-bwa index GenomRef
 
 ### Burrows Willer Alignment ###
- read -p "Escribe el path del directorio donde se encuentran los fasta q de los genomas a analizar" pathfastq
+read -p "Escribe el path del directorio donde se encuentran los archivos .fastq de los genomas a analizar" pathfastq
+read -p "Escribe el nombre del directorio donde se encuentran los archivos .fastq de los genomas a analizar" dirfastq
 
+mv "$pathfastq/$dirfastq" "$analysis_name/"
 
+cd "$path_GenRef"
+cd "$analysis_name"
 
-
-bwa mem GenomRef Genom1.1.fasta Genom1.2.fasta -o Genom.1.sam
+printf '%s\n' *.fastq.gz | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
+while read prefix; do
+    bwa mem "$path_GenRef/$analysis_name/$GenomRef" "${prefix}_R1.fastq.gz" "${prefix}_R2.fastq.gz" -o "${prefix}".1.sam
+done
 
 ### Transformar .sam a .bam ###
 
