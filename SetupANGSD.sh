@@ -42,14 +42,14 @@ done
 
 printf '%s\n' *.1.sam | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
 while read prefix; do
-    samtools view "${prefix}".1.sam -o "${prefix}".1.sam
+    samtools view "${prefix}".1.sam -o "${prefix}".1.bam
 done
 
 ### Sortear los documentos .bam ###
 
 printf '%s\n' *.1.bam | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
 while read prefix; do
-    samtools sort "${prefix}".1.bam -o "${prefix}".1.sorted.sam
+    samtools sort "${prefix}".1.bam -o "${prefix}".1.sorted.bam
 done
 
 ### Indexar los documentos .bam y crear listas de .bam ###
@@ -59,7 +59,7 @@ mkdir bams_sorted
 
 for i in bams_sorted/*.bam; do samtools index $; done 
 
-ls bams/*.bam > bam.filelist 
+ls bams/*.sorted.bam > bam.filelist 
 
 nano bam_sorted.filelist 
 
