@@ -40,14 +40,19 @@ done
 
 ### Transformar .sam a .bam ###
 
-samtools view Genom.1.sam -o Genom.1.bam 
+printf '%s\n' *.1.sam | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
+while read prefix; do
+    samtools view "${prefix}".1.sam -o "${prefix}".1.sam
+done
 
 ### Sortear los documentos .bam ###
 
-samtools sort Genom.1.bam -o Genom.1_sorted.bam
+printf '%s\n' *.1.bam | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
+while read prefix; do
+    samtools sort "${prefix}".1.bam -o "${prefix}".1.sorted.sam
+done
 
 ### Indexar los documentos .bam y crear listas de .bam ###
-
 ## Crear un directorio para los bams ##
 
 mkdir bams_sorted
