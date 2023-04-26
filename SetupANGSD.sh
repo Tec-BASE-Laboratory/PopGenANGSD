@@ -2,6 +2,8 @@
 
 #### Setup y preparación de los datos #### 
 
+### Exportar bwa y angsd para usarlo dentro del ambiente### 
+
 ### Bienvenida y Creación de un directorio para todo el análisis ### 
 
 echo "Nuevo análisis con ANGSD"
