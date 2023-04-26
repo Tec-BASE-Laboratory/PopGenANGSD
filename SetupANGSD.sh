@@ -20,16 +20,15 @@ done
 
 read -p "Escribe el nombre del archivo del genoma de referencia como se encuentra en la lista anterior" GenomRef
 
-mv "$GenomRef" "$analysis_name/"
+cp "$GenomRef" "$analysis_name/"
 cd "$analysis_name"
 bwa index "$path_GenRef/$analysis_name/$GenomRef"
 
 
 ### Burrows Willer Alignment ###
 read -p "Escribe el path del directorio donde se encuentran los archivos .fastq de los genomas a analizar" pathfastq
-read -p "Escribe el nombre del directorio donde se encuentran los archivos .fastq de los genomas a analizar" dirfastq
 
-mv "$pathfastq/$dirfastq" "$analysis_name/"
+cp "$pathfastq/" "$analysis_name/"
 
 cd "$path_GenRef"
 cd "$analysis_name"
@@ -40,15 +39,11 @@ while read prefix; do
 done
 
 ### Transformar .sam a .bam ###
-
-printf '%s\n' *.1.sam | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
 while read prefix; do
     samtools view "${prefix}".1.sam -o "${prefix}".1.bam
 done
 
 ### Sortear los documentos .bam ###
-
-printf '%s\n' *.1.bam | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
 while read prefix; do
     samtools sort "${prefix}".1.bam -o "${prefix}".1.sorted.bam
 done
@@ -63,5 +58,3 @@ for i in bams_sorted/*.bam; do samtools index $; done
 ls bams/*.sorted.bam > bam.filelist 
 
 nano bam_sorted.filelist 
-
-/your/path/Genom.1_sorted.bam
