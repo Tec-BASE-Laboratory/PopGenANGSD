@@ -11,7 +11,6 @@ cd $path_GenRef
 mkdir $analysis_name 
 read -p "Ahora escribe el nombre de la carpeta donde se encuentra tu genoma de referencia " GenRefDir
 
-
 for filename in $GenRefDir/*.fasta
 do 
     echo $filename
