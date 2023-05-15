@@ -12,14 +12,17 @@ if ! command -v bwa &>/dev/null; then
     echo "BWA is not installed. Installing..."
     sudo apt update
     sudo apt install -y bwa
+else
+    echo "BWA is already installed."
 fi
 
-# Check if samtools is installed # 
-
+# Check if samtools is installed #
 if ! command -v samtools &>/dev/null; then
     echo "samtools is not installed. Installing..."
     sudo apt update
     sudo apt install -y samtools
+else
+    echo "samtools is already installed."
 fi
 
 ### Bienvenida y Creación de un directorio para todo el análisis ### 
