@@ -28,11 +28,11 @@ echo "Nuevo análisis con ANGSD"
 
 # Validación de datos para comenzar el análisis 
 while true; do
-    read -p "Escribe el nombre del Nuevo Análisis sin espacios ni caracteres especiales: " analysis_name
-    if [[ $analysis_name =~ ^[a-zA-Z0-9]+$ ]]; then
+    read -p "Enter the name (without spaces or special characters): " input
+    if [[ $input =~ ^[a-zA-Z0-9_]+$ ]]; then
         break
     else
-        echo "Nombre inválido. Por favor, introduce el nombre sin espacios ni caracteres especiales."
+        echo "Invalid input. Please enter a name without spaces or special characters."
     fi
 done
 
