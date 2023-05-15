@@ -10,13 +10,14 @@ echo "Setup para nuevo análisis con ANGSD"
 
 # Validación de datos para comenzar el análisis 
 while true; do
-    read -p "Escriba el nombre que desea asignar al nuevo análisis. Escribalo solamente usando con números y letras (es posible usar '_'): " analysis_name
+    read -p "Escriba el nombre que desea asignar al nuevo análisis. Escribalo solamente usando números, letras o guiones bajos (_): " analysis_name
     if [[ $analysis_name =~ ^[a-zA-Z0-9_]+$ ]]; then
         break
     else
-        echo "Nombre inválido, por favor poner un nombre haciendo uso solamente de números y letras, es posible usar '_'."
+        echo "Nombre inválido. Por favor, utilice solo números, letras o guiones bajos (_)."
     fi
 done
+
 read -p "Escribe el path del directorio donde se encuentra tu genoma de referencia: " path_GenRef
 
 while true; do
