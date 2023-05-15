@@ -11,7 +11,7 @@ echo "Setup para nuevo análisis con ANGSD"
 # Validación de datos para comenzar el análisis 
 while true; do
     read -p "Escriba el nombre que desea asignar al nuevo análisis. Escribalo solamente usando números, letras o guiones bajos (_): " analysis_name
-    if [[ "$analysis_name" =~ ^[[:alnum:]_]+$ ]]; then
+    if echo "$analysis_name" | grep -qE '^[[:alnum:]_]+$'; then
         break
     else
         echo "Nombre inválido. Por favor, utilice solo números, letras o guiones bajos (_)."
@@ -26,6 +26,7 @@ while true; do
         echo "Ruta de directorio inválida. Por favor, introduce una ruta válida hacia un directorio."
     fi
 done
+
 
 
 cd "$path_GenRef"
