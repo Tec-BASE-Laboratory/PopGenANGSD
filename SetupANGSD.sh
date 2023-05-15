@@ -4,34 +4,68 @@
 
 ### Exportar bwa y angsd para usarlo dentro del ambiente### 
 
+## Validación del entorno y configuración de herramientas requeridas ##
+
+# Check if BWA is installed #
+
+if ! command -v bwa &>/dev/null; then
+    echo "BWA is not installed. Installing..."
+    sudo apt update
+    sudo apt install -y bwa
+fi
+
+# Check if samtools is installed # 
+
+if ! command -v samtools &>/dev/null; then
+    echo "samtools is not installed. Installing..."
+    sudo apt update
+    sudo apt install -y samtools
+fi
+
 ### Bienvenida y Creación de un directorio para todo el análisis ### 
 
 echo "Nuevo análisis con ANGSD"
-read -p "Escribe el nombre del Nuevo Análisis sin espacios ni caracteres especiales " analysis_name
-read -p "Escribe el path del directorio donde se encuentra la carpeta de tu genoma de referencia " path_GenRef 
-cd $path_GenRef
-mkdir $analysis_name 
-read -p "Ahora escribe el nombre de la carpeta donde se encuentra tu genoma de referencia " GenRefDir
 
-for filename in $GenRefDir/*.fasta
-do 
-    echo $filename
-done 
+# Validación de datos para comenzar el análisis 
+while true; do
+    read -p "Escribe el nombre del Nuevo Análisis sin espacios ni caracteres especiales: " analysis_name
+    if [[ $analysis_name =~ ^[a-zA-Z0-9]+$ ]]; then
+        break
+    else
+        echo "Nombre inválido. Por favor, introduce el nombre sin espacios ni caracteres especiales."
+    fi
+done
 
-read -p "Escribe el nombre del archivo del genoma de referencia como se encuentra en la lista anterior" GenomRef
+read -p "Escribe el path del directorio donde se encuentra tu genoma de referencia: " path_GenRef
+
+while true; do
+    if [[ -d "$path_GenRef" ]]; then
+        break
+    else
+        echo "Ruta de directorio inválida. Por favor, introduce una ruta válida hacia un directorio."
+        read -p "Escribe el path del directorio donde se encuentra tu genoma de referencia: " path_GenRef
+    fi
+done
+
+cd "$path_GenRef"
+mkdir "$analysis_name"
+
+for filename in "$path_GenRef"/*.fasta; do
+    echo "$filename"
+done
+
+read -p "Escribe el nombre del archivo del genoma de referencia como se encuentra en la lista anterior: " GenomRef
 
 cp "$GenomRef" "$analysis_name/"
 cd "$analysis_name"
 bwa index "$path_GenRef/$analysis_name/$GenomRef"
 
-
 ### Burrows Willer Alignment ###
-read -p "Escribe el path del directorio donde se encuentran los archivos .fastq de los genomas a analizar" pathfastq
+read -p "Escribe el path del directorio donde se encuentran los archivos .fastq de los genomas a analizar: " pathfastq
 
-cp "$pathfastq/" "$analysis_name/"
+cp -r "$pathfastq/" "$analysis_name/"
 
-cd "$path_GenRef"
-cd "$analysis_name"
+cd "$path_GenRef/$analysis_name"
 
 printf '%s\n' *.fastq.gz | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
 while read prefix; do
@@ -53,8 +87,12 @@ done
 
 mkdir bams_sorted
 
-for i in bams_sorted/*.bam; do samtools index $; done 
+for i in bams_sorted/*.bam; do
+    samtools index "$i"
+done 
 
 ls bams/*.sorted.bam > bam.filelist 
 
+# Open bam_sorted.filelist with a text editor if needed
 nano bam_sorted.filelist 
+
