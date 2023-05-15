@@ -10,7 +10,7 @@ echo "Setup para nuevo análisis con ANGSD"
 
 # Validación de datos para comenzar el análisis 
 while true; do
-    read -p "Escriba el nombre que desea asignar al nuevo análisis. Escribalo solamente usando con números y letras (se puede usar '-'): " analysis_name
+    read -p "Escriba el nombre que desea asignar al nuevo análisis. Escribalo solamente usando con números y letras (se puede usar '_'): " analysis_name
     if [[ $analysis_name =~ ^[a-zA-Z0-9_]+$ ]]; then
         break
     else
