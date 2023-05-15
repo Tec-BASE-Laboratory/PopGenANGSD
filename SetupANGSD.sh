@@ -27,12 +27,10 @@ while true; do
     fi
 done
 
-
-
 cd "$path_GenRef"
 mkdir "$analysis_name"
 
-for filename in "$path_GenRef"/*.fasta; do
+for filename in "$path_GenRef"/*.fasta; "$path_GenRef"/*.fna; do
     echo "$filename"
 done
 
