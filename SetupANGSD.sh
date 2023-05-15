@@ -4,38 +4,17 @@
 
 ### Exportar bwa y angsd para usarlo dentro del ambiente### 
 
-## Validación del entorno y configuración de herramientas requeridas ##
-
-# Check if BWA is installed #
-
-if ! command -v bwa &>/dev/null; then
-    echo "BWA is not installed. Installing..."
-    sudo apt update
-    sudo apt install -y bwa
-else
-    echo "BWA is already installed."
-fi
-
-# Check if samtools is installed #
-if ! command -v samtools &>/dev/null; then
-    echo "samtools is not installed. Installing..."
-    sudo apt update
-    sudo apt install -y samtools
-else
-    echo "samtools is already installed."
-fi
-
 ### Bienvenida y Creación de un directorio para todo el análisis ### 
 
-echo "Nuevo análisis con ANGSD"
+echo "Setup para nuevo análisis con ANGSD"
 
 # Validación de datos para comenzar el análisis 
 while true; do
-    read -p "Enter the name (without spaces or special characters): " input
-    if [[ $input =~ ^[a-zA-Z0-9_]+$ ]]; then
+    read -p "Escriba el nombre que desea asignar al nuevo análisis. Escribalo solamente usando con números y letras (se puede usar '-'): " analysis_name
+    if [[ $analysis_name =~ ^[a-zA-Z0-9_]+$ ]]; then
         break
     else
-        echo "Invalid input. Please enter a name without spaces or special characters."
+        echo "Nombre inválido, por favor poner un nombre haciendo uso solamente de números y letras, es posible usar '_'."
     fi
 done
 
