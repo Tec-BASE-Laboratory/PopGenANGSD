@@ -63,16 +63,15 @@ while read prefix; do
     bwa mem "$path_GenRef/$analysis_name/$GenomRef" "${prefix}_R1.fastq.gz" "${prefix}_R2.fastq.gz" -o "${prefix}".1.sam
 done
 
-### Transformar .sam a .bam ###
-while read prefix; do
-    samtools view "${prefix}".1.sam -o "${prefix}".1.bam
+for prefix in "$path_GenRef/$analysis_name"/*.sam; do
+    samtools view -b "$prefix" > "${prefix%.sam}.bam"
 done
 
-### Sortear los documentos .bam ###
-while read prefix; do
-    samtools sort "${prefix}".1.bam -o "${prefix}".1.sorted.bam
+# Sort the .bam files
+for bamfile in "$path_GenRef/$analysis_name"/*.bam; do
+    sorted_bam="${bamfile%.bam}.sorted.bam"
+    samtools sort "$bamfile" -o "$sorted_bam"
 done
-
 ### Indexar los documentos .bam y crear listas de .bam ###
 ## Crear un directorio para los bams ##
 
