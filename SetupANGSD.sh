@@ -30,7 +30,11 @@ done
 cd "$path_GenRef"
 mkdir "$analysis_name"
 
-for filename in "$path_GenRef"/*.fasta; "$path_GenRef"/*.fna; do
+for filename in "$path_GenRef"/*.fasta; do
+    echo "$filename"
+done
+
+for filename in "$path_GenRef"/*.fna; do
     echo "$filename"
 done
 
@@ -38,7 +42,14 @@ read -p "Escribe el nombre del archivo del genoma de referencia como se encuentr
 
 cp "$GenomRef" "$analysis_name/"
 cd "$analysis_name"
-bwa index "$path_GenRef/$analysis_name/$GenomRef"
+
+# Check if the reference genome is already indexed
+if [[ ! -f "$path_GenRef/$analysis_name/$GenomRef.bwt" ]]; then
+    bwa index "$path_GenRef/$analysis_name/$GenomRef"
+else
+    echo "El genoma de referencia ya ha sido indexado."
+fi
+
 
 ### Burrows Willer Alignment ###
 read -p "Escribe el path del directorio donde se encuentran los archivos .fastq de los genomas a analizar: " pathfastq
@@ -47,7 +58,7 @@ cp -r "$pathfastq/" "$analysis_name/"
 
 cd "$path_GenRef/$analysis_name"
 
-printf '%s\n' *.fastq.gz | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq |
+printf '%s\n' *.fastq.gz | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq | ## Cambiar el .fastq.gz dependiendo de la extensión que tenga el documento
 while read prefix; do
     bwa mem "$path_GenRef/$analysis_name/$GenomRef" "${prefix}_R1.fastq.gz" "${prefix}_R2.fastq.gz" -o "${prefix}".1.sam
 done
