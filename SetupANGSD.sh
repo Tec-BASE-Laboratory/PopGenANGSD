@@ -97,18 +97,14 @@ nano bam_sorted.filelist
 
 
 # Filter and process .fq.gz files
-for fq1 in *_1.fq.gz; do
-    prefix="${fq1%%_1.fq.gz}"  # Extract the prefix
-    
-    # Skip processing if either .1. or .2. file is missing
-    if [[ ! -f "$fq1" || ! -f "${prefix}_2.fq.gz" ]]; then
-        echo "Missing .fq.gz files for prefix: $prefix"
-        continue
+for file in "$directory_path"/*.fn.gz; do
+    if [[ "$file" != *".rem."* ]]; then
+        if [[ "$file" == *".1.fn.gz" || "$file" == *".2.fn.gz" ]]; then
+            # Perform BWA alignment with the file
+            bwa align "$file"
+        fi
     fi
-    
-    # Process .fq.gz files
-    bwa mem "$path_GenRef/$analysis_name/$GenomRef" "$fq1" "${prefix}_2.fq.gz" -o "${prefix}.sam"
-
+done
     # Convert .sam file to .bam
     samfile="${prefix}.sam"
     bamfile="${samfile%.sam}.bam"
