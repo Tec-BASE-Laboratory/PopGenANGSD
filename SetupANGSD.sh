@@ -96,18 +96,18 @@ ls bams/*.sorted.bam > bam.filelist
 nano bam_sorted.filelist 
 
 
-for prefix in $(printf '%s\n' *.fastq.gz | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq); do
-    fq1="${prefix}_1.fq.gz"
-    fq2="${prefix}_2.fq.gz"
+# Filter and process .fq.gz files
+for fq1 in *_1.fq.gz; do
+    prefix="${fq1%%_1.fq.gz}"  # Extract the prefix
     
     # Skip processing if either .1. or .2. file is missing
-    if [[ ! -f "$fq1" || ! -f "$fq2" ]]; then
+    if [[ ! -f "$fq1" || ! -f "${prefix}_2.fq.gz" ]]; then
         echo "Missing .fq.gz files for prefix: $prefix"
         continue
     fi
     
     # Process .fq.gz files
-    bwa mem "$path_GenRef/$analysis_name/$GenomRef" "$fq1" "$fq2" -o "${prefix}.sam"
+    bwa mem "$path_GenRef/$analysis_name/$GenomRef" "$fq1" "${prefix}_2.fq.gz" -o "${prefix}.sam"
 
     # Convert .sam file to .bam
     samfile="${prefix}.sam"
@@ -118,3 +118,4 @@ for prefix in $(printf '%s\n' *.fastq.gz | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq
     sorted_bam="${bamfile%.bam}.sorted.bam"
     samtools sort "$bamfile" -o "$sorted_bam"
 done
+
