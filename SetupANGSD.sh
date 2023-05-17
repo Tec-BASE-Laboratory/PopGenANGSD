@@ -52,7 +52,14 @@ fi
 
 
 ### Burrows Willer Alignment ###
-read -p "Escribe el path del directorio donde se encuentran los archivos .fastq de los genomas a analizar: " pathfastq
+while true; do
+    read -p "Escribe el path del directorio donde se encuentran los archivos .fastq de los genomas a analizar:  " pathfastq
+    if [ -d "$path_GenRef" ]; then
+        break
+    else
+        echo "Ruta de directorio inválida. Por favor, introduce una ruta válida hacia un directorio."
+    fi
+done
 
 cp -r "$pathfastq/" "$analysis_name/"
 
@@ -63,8 +70,10 @@ while read prefix; do
     bwa mem "$path_GenRef/$analysis_name/$GenomRef" "${prefix}_R1.fastq.gz" "${prefix}_R2.fastq.gz" -o "${prefix}".1.sam
 done
 
-for prefix in "$path_GenRef/$analysis_name"/*.sam; do
-    samtools view -b "$prefix" > "${prefix%.sam}.bam"
+# Convert .sam files to .bam
+for samfile in "$path_GenRef/$analysis_name"/*.sam; do
+    bamfile="${samfile%.sam}.bam"
+    samtools view -b "$samfile" > "$bamfile"
 done
 
 # Sort the .bam files
@@ -86,3 +95,26 @@ ls bams/*.sorted.bam > bam.filelist
 # Open bam_sorted.filelist with a text editor if needed
 nano bam_sorted.filelist 
 
+
+for prefix in $(printf '%s\n' *.fastq.gz | sed 's/^\([^_]*_[^_]*\).*/\1/' | uniq); do
+    fq1="${prefix}_1.fq.gz"
+    fq2="${prefix}_2.fq.gz"
+    
+    # Skip processing if either .1. or .2. file is missing
+    if [[ ! -f "$fq1" || ! -f "$fq2" ]]; then
+        echo "Missing .fq.gz files for prefix: $prefix"
+        continue
+    fi
+    
+    # Process .fq.gz files
+    bwa mem "$path_GenRef/$analysis_name/$GenomRef" "$fq1" "$fq2" -o "${prefix}.sam"
+
+    # Convert .sam file to .bam
+    samfile="${prefix}.sam"
+    bamfile="${samfile%.sam}.bam"
+    samtools view -b "$samfile" > "$bamfile"
+
+    # Sort the .bam file
+    sorted_bam="${bamfile%.bam}.sorted.bam"
+    samtools sort "$bamfile" -o "$sorted_bam"
+done
